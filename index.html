@@ -1,2 +1,129 @@
-# mapa-dos-gamers
-Mapa gamer comunitário do Brasil
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LEVEL UP — Mapa dos Gamers</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0a1020;color:#f3f6ff;font-family:Arial,sans-serif}
+header{padding:24px 16px;background:linear-gradient(135deg,#202e57,#10172c);text-align:center;border-bottom:2px solid #70f5bd}
+h1{color:#70f5bd;margin:5px}
+header p{color:#c6d0e8}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:12px;background:#111a30;position:sticky;top:0}
+button{background:#70f5bd;color:#091323;border:0;border-radius:10px;padding:11px 14px;font-weight:bold;cursor:pointer}
+nav button{background:#263653;color:white}
+main{max-width:900px;margin:auto;padding:16px}
+.card{background:#141f35;border:1px solid #2d4161;border-radius:16px;padding:17px;margin:14px 0}
+h2{color:#70f5bd}
+small,.muted{color:#b8c5df}
+input,select{background:#091326;color:white;border:1px solid #425575;border-radius:8px;padding:12px;width:100%;margin:7px 0}
+.citymap{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.city{background:#202f4b;border:1px solid #3e567a;border-radius:12px;padding:18px 4px;text-align:center;cursor:pointer}
+.city:hover{border-color:#70f5bd}
+.bar{background:#263653;height:12px;border-radius:10px;overflow:hidden}
+#progress{height:100%;width:0;background:#70f5bd}
+.option{display:block;width:100%;text-align:left;background:#253653;color:white;margin:8px 0}
+footer{text-align:center;padding:25px;color:#9cabc7}
+section{scroll-margin-top:90px}
+</style>
+</head>
+<body>
+<header>
+<div>🎮 🌎 🏆</div>
+<h1>LEVEL UP</h1>
+<p>O mapa dos gamers. Explore, complete desafios e conquiste seu lugar!</p>
+</header>
+<nav>
+<button onclick="go('inicio')">🏠 Início</button>
+<button onclick="go('mapa')">🗺️ Mapa</button>
+<button onclick="go('desafios')">🧩 Desafios</button>
+<button onclick="go('missoes')">🎯 Missões</button>
+<button onclick="go('ranking')">🏆 Ranking</button>
+</nav>
+<main>
+<section id="inicio" class="card">
+<h2>Bem-vindo ao universo gamer!</h2>
+<p>Crie sua identidade, funde cidades e ganhe experiência. Cada desafio pode levar você ao próximo nível!</p>
+<label>Seu apelido gamer</label>
+<input id="nick" placeholder="Ex.: Player123" maxlength="20">
+<button onclick="saveNick()">Salvar apelido</button>
+<hr>
+<h2 id="player">🎮 Jogador</h2>
+<p>Nível <b id="level">1</b> · <b id="xp">0</b> XP</p>
+<div class="bar"><div id="progress"></div></div>
+<p class="muted" id="next">100 XP para o próximo nível</p>
+</section>
+
+<section id="mapa" class="card">
+<h2>🗺️ Mapa dos Gamers</h2>
+<p class="muted">Toque numa região para explorar. Mapa ilustrativo, não geográfico.</p>
+<div class="citymap">
+<div class="city" onclick="explore('Norte')">🌳<br>Norte</div>
+<div class="city" onclick="explore('Nordeste')">🌞<br>Nordeste</div>
+<div class="city" onclick="explore('Centro-Oeste')">🏜️<br>Centro-Oeste</div>
+<div class="city" onclick="explore('Sudeste')">🏙️<br>Sudeste</div>
+<div class="city" onclick="explore('Sul')">❄️<br>Sul</div>
+<div class="city" onclick="explore('Ilha Gamer')">🏝️<br>Ilha Gamer</div>
+</div>
+<p id="region" class="muted">Escolha uma região para descobrir sua missão.</p>
+<h2>🏗️ Fundar uma cidade</h2>
+<input id="cityname" placeholder="Nome da sua cidade">
+<input id="state" placeholder="Estado ou região">
+<button onclick="foundCity()">Fundar cidade (+50 XP)</button>
+<div id="cities"></div>
+</section>
+
+<section id="desafios" class="card">
+<h2>🧩 Desafio gamer</h2>
+<p id="question"></p>
+<div id="answers"></div>
+<p id="feedback"></p>
+<button onclick="newQuestion()">Próximo desafio</button>
+</section>
+
+<section id="missoes" class="card">
+<h2>🎯 Missões</h2>
+<div id="missions"></div>
+</section>
+
+<section id="ranking" class="card">
+<h2>🏆 Ranking deste dispositivo</h2>
+<p class="muted">O ranking salvo aqui é local; ainda não reúne jogadores da internet.</p>
+<div id="rankinglist"></div>
+</section>
+<footer>LEVEL UP — projeto independente feito para a comunidade gamer.<br>Seu progresso fica salvo neste navegador.</footer>
+</main>
+<script>
+const defaults={xp:0,nick:"Player",cities:[],done:[],explored:[],solved:[]};
+let data;
+try{data={...defaults,...JSON.parse(localStorage.getItem("levelup-data")||"{}")}}catch(e){data={...defaults}}
+const questions=[
+{q:"Qual destes é um gênero de videogame?",a:["RPG","PDF","GPS"],c:0},
+{q:"O que significa XP em muitos jogos?",a:["Experiência","Extra power supply","Express player"],c:0},
+{q:"Qual é o objetivo comum de um jogo de plataforma?",a:["Pular obstáculos","Enviar e-mail","Editar planilhas"],c:0},
+{q:"O que é multiplayer?",a:["Jogo com vários jogadores","Jogo sem imagem","Jogo só de música"],c:0},
+{q:"Qual destes é um dispositivo de videogame?",a:["Controle","Liquidificador","Impressora fiscal"],c:0}
+];
+const missions=[
+{id:"explore",title:"Explorador",desc:"Explore uma região do mapa",xp:20},
+{id:"city",title:"Fundador",desc:"Funde sua primeira cidade",xp:50},
+{id:"quiz",title:"Mente gamer",desc:"Acerte um desafio",xp:25},
+{id:"three",title:"Conquistador",desc:"Explore três regiões diferentes",xp:40}
+];
+function save(){localStorage.setItem("levelup-data",JSON.stringify(data));render()}
+function addXP(n){data.xp+=n;save()}
+function go(id){document.getElementById(id).scrollIntoView({behavior:"smooth"})}
+function saveNick(){let n=document.getElementById("nick").value.trim();if(n){data.nick=n;save()}}
+function explore(name){document.getElementById("region").textContent="Você explorou "+name+"!";if(!data.explored.includes(name)){data.explored.push(name);addXP(10)}else save()}
+function foundCity(){let n=document.getElementById("cityname").value.trim(),s=document.getElementById("state").value.trim();if(!n){alert("Digite o nome da cidade!");return}if(data.cities.some(c=>c.name.toLowerCase()===n.toLowerCase())){alert("Você já fundou uma cidade com esse nome.");return}data.cities.push({name:n,state:s||"Região não informada"});document.getElementById("cityname").value="";document.getElementById("state").value="";addXP(50)}
+let current=0;
+function newQuestion(){current=Math.floor(Math.random()*questions.length);const q=questions[current];document.getElementById("question").textContent=q.q;document.getElementById("feedback").textContent="";document.getElementById("answers").innerHTML="";q.a.forEach((a,i)=>{let b=document.createElement("button");b.className="option";b.textContent=a;b.onclick=()=>answer(i);document.getElementById("answers").appendChild(b)})}
+function answer(i){if(data.solved.includes(current)){document.getElementById("feedback").textContent="Você já respondeu este desafio!";return}if(i===questions[current].c){data.solved.push(current);data.done.push("quiz");document.getElementById("feedback").textContent="Resposta certa! +25 XP 🎉";addXP(25)}else{document.getElementById("feedback").textContent="Quase! Tente outro desafio.";}}
+function render(){document.getElementById("nick").value=data.nick==="Player"?"":data.nick;document.getElementById("player").textContent="🎮 "+data.nick;let level=Math.floor(data.xp/100)+1,part=data.xp%100;document.getElementById("level").textContent=level;document.getElementById("xp").textContent=data.xp;document.getElementById("progress").style.width=part+"%";document.getElementById("next").textContent=(100-part)+" XP para o próximo nível";document.getElementById("cities").innerHTML="<h3>Suas cidades ("+data.cities.length+")</h3>"+(data.cities.map(c=>"🏙️ "+esc(c.name)+" — "+esc(c.state)).join("<br>")||"Nenhuma cidade fundada ainda.");document.getElementById("missions").innerHTML=missions.map(m=>{let ok=m.id==="explore"?data.explored.length>0:m.id==="city"?data.cities.length>0:m.id==="quiz"?data.solved.length>0:data.explored.length>=3;return "<div class='card'><b>"+(ok?"✅ ":"🎯 ")+m.title+"</b><p>"+m.desc+"</p><small>"+(ok?"Missão concluída!":m.xp+" XP de recompensa")+"</small></div>"}).join("");document.getElementById("rankinglist").innerHTML="<p>1. "+esc(data.nick)+" — "+data.xp+" XP</p><p class='muted'>Ganhe XP para subir de nível!</p>"}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+render();newQuestion();
+</script>
+</body>
+</html>
