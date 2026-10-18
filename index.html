@@ -1,129 +1,658 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d1c">
 <title>LEVEL UP — Mapa dos Gamers</title>
 <style>
+:root{--bg:#080d1c;--panel:#121d33;--line:#304563;--mint:#72ffd0;--cyan:#70d7ff;--purple:#b49aff;--gold:#ffd66b;--text:#f4f7ff;--muted:#aab8d3}
 *{box-sizing:border-box}
-body{margin:0;background:#0a1020;color:#f3f6ff;font-family:Arial,sans-serif}
-header{padding:24px 16px;background:linear-gradient(135deg,#202e57,#10172c);text-align:center;border-bottom:2px solid #70f5bd}
-h1{color:#70f5bd;margin:5px}
-header p{color:#c6d0e8}
-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:12px;background:#111a30;position:sticky;top:0}
-button{background:#70f5bd;color:#091323;border:0;border-radius:10px;padding:11px 14px;font-weight:bold;cursor:pointer}
-nav button{background:#263653;color:white}
-main{max-width:900px;margin:auto;padding:16px}
-.card{background:#141f35;border:1px solid #2d4161;border-radius:16px;padding:17px;margin:14px 0}
-h2{color:#70f5bd}
-small,.muted{color:#b8c5df}
-input,select{background:#091326;color:white;border:1px solid #425575;border-radius:8px;padding:12px;width:100%;margin:7px 0}
-.citymap{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.city{background:#202f4b;border:1px solid #3e567a;border-radius:12px;padding:18px 4px;text-align:center;cursor:pointer}
-.city:hover{border-color:#70f5bd}
-.bar{background:#263653;height:12px;border-radius:10px;overflow:hidden}
-#progress{height:100%;width:0;background:#70f5bd}
-.option{display:block;width:100%;text-align:left;background:#253653;color:white;margin:8px 0}
-footer{text-align:center;padding:25px;color:#9cabc7}
-section{scroll-margin-top:90px}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:radial-gradient(ellipse at top,#1b3155,transparent 55%),var(--bg);color:var(--text);font:16px/1.5 system-ui,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;border-radius:12px;padding:11px 14px;font-weight:800;color:#071625;background:linear-gradient(135deg,var(--mint),var(--cyan))}
+button:hover{filter:brightness(1.08)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.secondary{background:#243451;color:white;border:1px solid #3b5276}
+.danger{background:#4b2436;color:#fff;border:1px solid #80415c}
+.wrap{max-width:1120px;margin:auto;padding:0 15px}
+.hero{text-align:center;padding:30px 0 24px}
+.brand{color:var(--mint);font-weight:900;letter-spacing:2px}
+h1{font-size:clamp(38px,9vw,70px);line-height:1;margin:16px 0}
+h1 span{background:linear-gradient(90deg,var(--mint),var(--cyan),var(--purple));color:transparent;background-clip:text}
+p{color:var(--muted)}
+.topbar{position:sticky;top:0;z-index:5;background:#080d1cf5;border-block:1px solid var(--line)}
+nav{display:flex;gap:4px;overflow:auto;padding:8px 0}
+nav button{background:transparent;color:white;white-space:nowrap;box-shadow:none}
+nav button:hover{background:#1a2b47}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;padding:18px 0 35px}
+.panel{grid-column:span 12;min-width:0;background:linear-gradient(150deg,#15223b,#0e172a);border:1px solid var(--line);border-radius:18px;padding:17px}
+.half{grid-column:span 6}
+h2{font-size:1.2rem;margin:0 0 10px}
+h3{font-size:1rem;margin:4px 0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.stat{background:#0c1527;border:1px solid var(--line);border-radius:13px;padding:11px}
+.stat strong{display:block;font-size:1.45rem}
+.stat span,.small{font-size:.8rem;color:var(--muted)}
+.progress{height:9px;background:#293955;border-radius:20px;overflow:hidden;margin-top:8px}
+.progress div{height:100%;background:linear-gradient(90deg,var(--mint),var(--cyan));width:0}
+.field{display:grid;gap:5px;margin:10px 0}
+.field input,.field select,.field textarea{width:100%;background:#091326;color:white;border:1px solid #354968;border-radius:10px;padding:11px}
+.field textarea{min-height:70px}
+.mapgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.region{min-height:92px;background:#172743;color:white;border:1px solid #3a5274;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:none}
+.region .emoji{font-size:25px}
+.region small{color:var(--muted);font-weight:400}
+.region.visited{border-color:var(--mint);background:#163c3b}
+.tile{background:#0d1729;border:1px solid #2d4263;border-radius:13px;padding:12px;margin:8px 0}
+.tile p{margin:5px 0;font-size:.9rem}
+.reward{color:var(--gold);font-weight:900}
+.option{display:block;width:100%;text-align:left;margin:7px 0;background:#1b2a45;color:white;border:1px solid #334c70;box-shadow:none}
+.badge{display:inline-block;background:#263858;border-radius:7px;padding:3px 8px;font-size:.75rem}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:#172743;border:1px solid #344969;border-radius:20px;padding:7px 10px}
+.notice{background:#0b1527;padding:11px;border-radius:12px;color:var(--muted);font-size:.85rem}
+.empty{padding:16px;text-align:center;color:var(--muted);border:1px dashed #354967;border-radius:12px}
+.worldmap{position:relative;overflow:hidden;min-height:245px;border-radius:14px;border:1px solid #355070;background:linear-gradient(135deg,#10283b,#102d3d 45%,#1c2945)}
+.worldmap:before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 15% 35%,#72ffd055 0 2px,transparent 3px),radial-gradient(circle at 37% 65%,#70d7ff55 0 2px,transparent 3px),radial-gradient(circle at 70% 32%,#b49aff55 0 2px,transparent 3px);background-size:37px 37px,51px 51px,43px 43px;opacity:.8}
+.continent{position:absolute;border:1px solid #5b8a8b88;background:#2f8b7c44;border-radius:48% 35% 52% 42%;transform:rotate(-17deg)}
+.c1{left:7%;top:18%;width:25%;height:45%}
+.c2{left:25%;top:54%;width:15%;height:30%;transform:rotate(20deg)}
+.c3{left:47%;top:17%;width:23%;height:32%;transform:rotate(15deg)}
+.c4{right:8%;top:38%;width:24%;height:32%;transform:rotate(-8deg)}
+.maplabel{position:absolute;background:#081323e8;border:1px solid #42627a;border-radius:9px;padding:5px 8px;font-size:.78rem}
+.ml1{left:9%;top:30%}
+.ml2{left:48%;top:25%}
+.ml3{right:8%;top:54%}
+.friendrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.friendrow>div{min-width:0}
+.friendrow button{padding:8px 10px}
+.gamebox{background:#0a1427;border:1px solid #2f4669;border-radius:14px;padding:14px;margin-top:10px}
+footer{text-align:center;color:#8597b6;padding:20px;font-size:.8rem}
+#toast{display:none;position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:10;background:#d7fff2;color:#071a18;padding:12px 16px;border-radius:12px;font-weight:900;max-width:92%}
+@media(max-width:700px){.half{grid-column:span 12}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.mapgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:13px}.worldmap{min-height:220px}}
 </style>
 </head>
 <body>
-<header>
-<div>🎮 🌎 🏆</div>
-<h1>LEVEL UP</h1>
-<p>O mapa dos gamers. Explore, complete desafios e conquiste seu lugar!</p>
+
+<header class="hero wrap">
+<div class="brand">✦ SEU UNIVERSO DE JOGOS ✦</div>
+<h1><span>LEVEL UP</span></h1>
+<p>Explore o mapa, crie cidades, jogue minigames e encontre novos amigos.</p>
+<button onclick="go('mapa')">🗺️ Explorar</button>
+<button class="secondary" onclick="go('jogos')">🎮 Jogar agora</button>
 </header>
-<nav>
-<button onclick="go('inicio')">🏠 Início</button>
-<button onclick="go('mapa')">🗺️ Mapa</button>
-<button onclick="go('desafios')">🧩 Desafios</button>
+
+<div class="topbar">
+<nav class="wrap">
+<button onclick="go('painel')">🏠 Início</button>
+<button onclick="go('mapa')">🗺️ Mapas</button>
+<button onclick="go('cidades')">🏙️ Cidades</button>
+<button onclick="go('jogos')">🎮 Jogos</button>
+<button onclick="go('amigos')">👥 Amigos</button>
+<button onclick="go('social')">📣 Compartilhar</button>
 <button onclick="go('missoes')">🎯 Missões</button>
-<button onclick="go('ranking')">🏆 Ranking</button>
+<button onclick="go('perfil')">👤 Perfil</button>
 </nav>
-<main>
-<section id="inicio" class="card">
-<h2>Bem-vindo ao universo gamer!</h2>
-<p>Crie sua identidade, funde cidades e ganhe experiência. Cada desafio pode levar você ao próximo nível!</p>
-<label>Seu apelido gamer</label>
-<input id="nick" placeholder="Ex.: Player123" maxlength="20">
-<button onclick="saveNick()">Salvar apelido</button>
-<hr>
-<h2 id="player">🎮 Jogador</h2>
-<p>Nível <b id="level">1</b> · <b id="xp">0</b> XP</p>
-<div class="bar"><div id="progress"></div></div>
-<p class="muted" id="next">100 XP para o próximo nível</p>
-</section>
-
-<section id="mapa" class="card">
-<h2>🗺️ Mapa dos Gamers</h2>
-<p class="muted">Toque numa região para explorar. Mapa ilustrativo, não geográfico.</p>
-<div class="citymap">
-<div class="city" onclick="explore('Norte')">🌳<br>Norte</div>
-<div class="city" onclick="explore('Nordeste')">🌞<br>Nordeste</div>
-<div class="city" onclick="explore('Centro-Oeste')">🏜️<br>Centro-Oeste</div>
-<div class="city" onclick="explore('Sudeste')">🏙️<br>Sudeste</div>
-<div class="city" onclick="explore('Sul')">❄️<br>Sul</div>
-<div class="city" onclick="explore('Ilha Gamer')">🏝️<br>Ilha Gamer</div>
 </div>
-<p id="region" class="muted">Escolha uma região para descobrir sua missão.</p>
-<h2>🏗️ Fundar uma cidade</h2>
-<input id="cityname" placeholder="Nome da sua cidade">
-<input id="state" placeholder="Estado ou região">
-<button onclick="foundCity()">Fundar cidade (+50 XP)</button>
-<div id="cities"></div>
+
+<main class="wrap">
+<div class="grid">
+
+<section id="painel" class="panel">
+<h2 id="welcome">Olá, Player! 🎮</h2>
+<p>Seu centro de comando: tudo o que você faz aumenta sua reputação gamer.</p>
+<div class="stats">
+<div class="stat"><strong id="xp">0</strong><span>✨ XP</span></div>
+<div class="stat"><strong id="level">1</strong><span>⬆️ Nível</span></div>
+<div class="stat"><strong id="cityCount">0</strong><span>🏙️ Cidades</span></div>
+<div class="stat"><strong id="wins">0</strong><span>🎮 Vitórias</span></div>
+</div>
+<p id="xpText">0 / 100 XP para o próximo nível</p>
+<div class="progress"><div id="xpBar"></div></div>
+<p><span class="badge" id="rank">RANK: NOVATO</span></p>
 </section>
 
-<section id="desafios" class="card">
-<h2>🧩 Desafio gamer</h2>
-<p id="question"></p>
-<div id="answers"></div>
-<p id="feedback"></p>
-<button onclick="newQuestion()">Próximo desafio</button>
+<section id="perfil" class="panel half">
+<h2>👤 Cadastro do jogador</h2>
+<p>Crie seu perfil local. Use um apelido no seu próprio navegador.</p>
+<div class="field"><label>Nome de jogador</label><input id="nick" maxlength="22" placeholder="Seu apelido"></div>
+<div class="field"><label>Emblema</label>
+<select id="avatar">
+<option>🎮</option><option>🐉</option><option>⚡</option><option>👾</option><option>🦊</option><option>🚀</option><option>🌙</option><option>🏆</option>
+</select></div>
+<button onclick="saveProfile()">Salvar perfil</button>
+<p class="small">Este cadastro ainda é local, não cria uma conta online.</p>
 </section>
 
-<section id="missoes" class="card">
+<section class="panel half">
+<h2>📜 Atividade recente</h2>
+<div id="activity" class="empty">Comece explorando!</div>
+</section>
+
+<section id="mapa" class="panel">
+<h2>🗺️ Mapas que existem no jogo</h2>
+<p>Explore o mapa ilustrativo do universo. As regiões são fictícias; não é um mapa GPS real.</p>
+<div class="worldmap">
+<div class="continent c1"></div><div class="continent c2"></div><div class="continent c3"></div><div class="continent c4"></div>
+<span class="maplabel ml1">🌲 Floresta Pixel</span>
+<span class="maplabel ml2">🏙️ Neon City</span>
+<span class="maplabel ml3">🏝️ Ilha Gamer</span>
+</div>
+<h3 style="margin-top:15px">Regiões disponíveis</h3>
+<div class="mapgrid" id="mapgrid"></div>
+<p id="regionInfo" class="notice">Escolha uma região para explorar (+15 XP).</p>
+</section>
+
+<section id="cidades" class="panel half">
+<h2>🏙️ Cidades e equipes</h2>
+<p>Você só pode pertencer a uma cidade por vez neste navegador.</p>
+<div class="field"><label>Fundar uma cidade</label><input id="cityName" maxlength="30" placeholder="Nome único da cidade"></div>
+<div class="field"><label>Região</label>
+<select id="cityRegion">
+<option>Floresta Pixel</option><option>Neon City</option><option>Ilha Gamer</option><option>Montanhas Glaciais</option><option>Deserto Rubro</option><option>Vale das Nuvens</option>
+</select></div>
+<div class="field"><label>Descrição</label><input id="cityDesc" maxlength="100" placeholder="Qual é a especialidade da cidade?"></div>
+<button onclick="foundCity()">🏗️ Fundar cidade (+50 XP)</button>
+<div id="cityList"></div>
+</section>
+
+<section class="panel half">
+<h2>🧭 Explorar cidades existentes</h2>
+<p>Entre em uma cidade ou veja seus detalhes. Um perfil só pode entrar em uma cidade de cada vez.</p>
+<div id="existingCities"></div>
+<button class="secondary" onclick="leaveCity()">Sair da minha cidade</button>
+<p class="notice" id="membership">Você ainda não pertence a uma cidade.</p>
+</section>
+
+<section id="jogos" class="panel">
+<h2>🎮 Área de minijogos</h2>
+<p>Jogue dentro do site e ganhe XP. Não precisa instalar nada.</p>
+<div class="grid" style="padding:0">
+<div class="panel half">
+<h3>🧠 Quiz gamer</h3>
+<p id="quizQuestion"></p>
+<div id="quizAnswers"></div>
+<p id="quizFeedback" class="notice">Escolha a resposta correta.</p>
+<button class="secondary" onclick="newQuiz()">Próxima pergunta</button>
+</div>
+<div class="panel half">
+<h3>⚡ Teste de reflexo</h3>
+<p>Toque no botão quando ele ficar verde. Tente bater seu recorde!</p>
+<div class="gamebox">
+<p id="reflexStatus">Pronto para jogar?</p>
+<button id="reflexBtn" onclick="reflexClick()">Começar teste</button>
+<p id="reflexResult" class="reward"></p>
+</div>
+</div>
+<div class="panel half">
+<h3>🔐 Enigma</h3>
+<p>Tenho teclas, mas não abro portas. Ajudo você a escrever. O que sou?</p>
+<div class="field"><input id="riddleAnswer" placeholder="Sua resposta"></div>
+<button onclick="solveRiddle()">Responder (+30 XP)</button>
+<p id="riddleFeedback" class="notice">Dica: você usa para digitar.</p>
+</div>
+<div class="panel half">
+<h3>🎯 Clique no alvo</h3>
+<p>Ganhe XP acertando o alvo. Há um pequeno intervalo entre jogadas.</p>
+<button id="targetBtn" class="secondary" onclick="targetGame()">🎯 Acertar alvo (+5 XP)</button>
+<p id="targetResult" class="notice">Pronto?</p>
+</div>
+</div>
+</section>
+
+<section id="amigos" class="panel half">
+<h2>👥 Amigos</h2>
+<p>Adicione apelidos à sua lista local. A busca global de jogadores precisa de um servidor online.</p>
+<div class="field"><label>Apelido do amigo</label><input id="friendName" maxlength="22" placeholder="Nome do amigo"></div>
+<button onclick="addFriend()">➕ Adicionar amigo</button>
+<div id="friendList"></div>
+</section>
+
+<section id="social" class="panel half">
+<h2>📣 Compartilhar seu perfil</h2>
+<p>Prepare uma mensagem para enviar no WhatsApp, Discord, mensagens ou outros aplicativos.</p>
+<div class="field"><label>Mensagem</label><textarea id="shareText"></textarea></div>
+<button onclick="shareProfile()">📤 Compartilhar</button>
+<button class="secondary" onclick="copyShare()">📋 Copiar texto</button>
+<p class="notice">O botão compartilhar usa os recursos disponíveis no celular. Não publica automaticamente nas redes sociais.</p>
+</section>
+
+<section id="missoes" class="panel half">
 <h2>🎯 Missões</h2>
-<div id="missions"></div>
+<div id="missionList"></div>
 </section>
 
-<section id="ranking" class="card">
-<h2>🏆 Ranking deste dispositivo</h2>
-<p class="muted">O ranking salvo aqui é local; ainda não reúne jogadores da internet.</p>
-<div id="rankinglist"></div>
+<section class="panel half">
+<h2>🏅 Conquistas</h2>
+<div id="achievements" class="chips"></div>
 </section>
-<footer>LEVEL UP — projeto independente feito para a comunidade gamer.<br>Seu progresso fica salvo neste navegador.</footer>
+
+<section class="panel">
+<h2>💾 Guardar progresso</h2>
+<p>Seu progresso fica neste navegador. Exporte um backup antes de trocar de aparelho ou limpar os dados.</p>
+<button class="secondary" onclick="exportSave()">📥 Exportar backup</button>
+<button class="secondary" onclick="document.getElementById('importFile').click()">📤 Importar backup</button>
+<input id="importFile" type="file" accept=".json,application/json" hidden onchange="importSave(event)">
+<p class="small">As cidades e amigos desta versão ficam neste navegador. Para compartilhar tudo com outros jogadores, será necessário conectar um banco de dados online.</p>
+</section>
+
+</div>
 </main>
+
+<footer>LEVEL UP — MAPA DOS GAMERS · <span id="year"></span><br>Protótipo independente de comunidade gamer.</footer>
+<div id="toast"></div>
+
 <script>
-const defaults={xp:0,nick:"Player",cities:[],done:[],explored:[],solved:[]};
-let data;
-try{data={...defaults,...JSON.parse(localStorage.getItem("levelup-data")||"{}")}}catch(e){data={...defaults}}
-const questions=[
-{q:"Qual destes é um gênero de videogame?",a:["RPG","PDF","GPS"],c:0},
-{q:"O que significa XP em muitos jogos?",a:["Experiência","Extra power supply","Express player"],c:0},
-{q:"Qual é o objetivo comum de um jogo de plataforma?",a:["Pular obstáculos","Enviar e-mail","Editar planilhas"],c:0},
-{q:"O que é multiplayer?",a:["Jogo com vários jogadores","Jogo sem imagem","Jogo só de música"],c:0},
-{q:"Qual destes é um dispositivo de videogame?",a:["Controle","Liquidificador","Impressora fiscal"],c:0}
+const KEY='levelup_gamers_v4';
+
+const regions=[
+{name:'Floresta Pixel',emoji:'🌲',desc:'Trilhas e segredos'},
+{name:'Neon City',emoji:'🌆',desc:'Cidade tecnológica'},
+{name:'Ilha Gamer',emoji:'🏝️',desc:'Praias e tesouros'},
+{name:'Montanhas Glaciais',emoji:'❄️',desc:'Desafio congelante'},
+{name:'Deserto Rubro',emoji:'🏜️',desc:'Ruínas escondidas'},
+{name:'Vale das Nuvens',emoji:'☁️',desc:'Ilhas flutuantes'}
 ];
+
+const quiz=[
+{q:'O que é XP?',a:['Pontos de experiência','Uma senha','Um controle'],c:0},
+{q:'O que é cooperativo?',a:['Jogar em equipe','Jogar sem tela','Desligar o jogo'],c:0},
+{q:'O que é um checkpoint?',a:['Ponto para continuar','Um tipo de teclado','Uma moeda real'],c:0},
+{q:'Qual é uma boa atitude online?',a:['Respeitar os outros','Compartilhar senhas','Ofender quem perde'],c:0},
+{q:'O que é uma missão?',a:['Um objetivo do jogo','Uma atualização do celular','Um cabo'],c:0},
+{q:'O que é um NPC?',a:['Personagem controlado pelo jogo','Um controle sem fio','Uma senha'],c:0}
+];
+
 const missions=[
-{id:"explore",title:"Explorador",desc:"Explore uma região do mapa",xp:20},
-{id:"city",title:"Fundador",desc:"Funde sua primeira cidade",xp:50},
-{id:"quiz",title:"Mente gamer",desc:"Acerte um desafio",xp:25},
-{id:"three",title:"Conquistador",desc:"Explore três regiões diferentes",xp:40}
+{id:'explore',name:'Explorador',desc:'Explore uma região.',xp:20,ok:d=>d.explored.length>=1},
+{id:'three',name:'Viajante',desc:'Explore três regiões.',xp:40,ok:d=>d.explored.length>=3},
+{id:'city',name:'Fundador',desc:'Crie uma cidade.',xp:30,ok:d=>d.cities.length>=1},
+{id:'quiz',name:'Mente gamer',desc:'Vença um quiz.',xp:25,ok:d=>d.solved.length>=1},
+{id:'friend',name:'Social',desc:'Adicione um amigo.',xp:20,ok:d=>d.friends.length>=1}
 ];
-function save(){localStorage.setItem("levelup-data",JSON.stringify(data));render()}
-function addXP(n){data.xp+=n;save()}
-function go(id){document.getElementById(id).scrollIntoView({behavior:"smooth"})}
-function saveNick(){let n=document.getElementById("nick").value.trim();if(n){data.nick=n;save()}}
-function explore(name){document.getElementById("region").textContent="Você explorou "+name+"!";if(!data.explored.includes(name)){data.explored.push(name);addXP(10)}else save()}
-function foundCity(){let n=document.getElementById("cityname").value.trim(),s=document.getElementById("state").value.trim();if(!n){alert("Digite o nome da cidade!");return}if(data.cities.some(c=>c.name.toLowerCase()===n.toLowerCase())){alert("Você já fundou uma cidade com esse nome.");return}data.cities.push({name:n,state:s||"Região não informada"});document.getElementById("cityname").value="";document.getElementById("state").value="";addXP(50)}
-let current=0;
-function newQuestion(){current=Math.floor(Math.random()*questions.length);const q=questions[current];document.getElementById("question").textContent=q.q;document.getElementById("feedback").textContent="";document.getElementById("answers").innerHTML="";q.a.forEach((a,i)=>{let b=document.createElement("button");b.className="option";b.textContent=a;b.onclick=()=>answer(i);document.getElementById("answers").appendChild(b)})}
-function answer(i){if(data.solved.includes(current)){document.getElementById("feedback").textContent="Você já respondeu este desafio!";return}if(i===questions[current].c){data.solved.push(current);data.done.push("quiz");document.getElementById("feedback").textContent="Resposta certa! +25 XP 🎉";addXP(25)}else{document.getElementById("feedback").textContent="Quase! Tente outro desafio.";}}
-function render(){document.getElementById("nick").value=data.nick==="Player"?"":data.nick;document.getElementById("player").textContent="🎮 "+data.nick;let level=Math.floor(data.xp/100)+1,part=data.xp%100;document.getElementById("level").textContent=level;document.getElementById("xp").textContent=data.xp;document.getElementById("progress").style.width=part+"%";document.getElementById("next").textContent=(100-part)+" XP para o próximo nível";document.getElementById("cities").innerHTML="<h3>Suas cidades ("+data.cities.length+")</h3>"+(data.cities.map(c=>"🏙️ "+esc(c.name)+" — "+esc(c.state)).join("<br>")||"Nenhuma cidade fundada ainda.");document.getElementById("missions").innerHTML=missions.map(m=>{let ok=m.id==="explore"?data.explored.length>0:m.id==="city"?data.cities.length>0:m.id==="quiz"?data.solved.length>0:data.explored.length>=3;return "<div class='card'><b>"+(ok?"✅ ":"🎯 ")+m.title+"</b><p>"+m.desc+"</p><small>"+(ok?"Missão concluída!":m.xp+" XP de recompensa")+"</small></div>"}).join("");document.getElementById("rankinglist").innerHTML="<p>1. "+esc(data.nick)+" — "+data.xp+" XP</p><p class='muted'>Ganhe XP para subir de nível!</p>"}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-render();newQuestion();
+
+const base={
+nick:'Player',avatar:'🎮',xp:0,cities:[],explored:[],
+solved:[],claimed:[],activity:[],riddleDone:false,
+friends:[],memberCity:null,wins:0,lastTarget:0
+};
+
+let d;
+try{
+d={...base,...JSON.parse(localStorage.getItem(KEY)||'{}')};
+}catch(e){
+d={...base};
+}
+
+let qi=0;
+let reflexState='idle';
+let reflexStart=0;
+let reflexTimer=null;
+
+function esc(s){
+return String(s).replace(/[&<>"']/g,c=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+}
+
+function toast(s){
+let t=document.getElementById('toast');
+t.textContent=s;
+t.style.display='block';
+clearTimeout(window.tt);
+window.tt=setTimeout(()=>t.style.display='none',2200);
+}
+
+function go(id){
+document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+
+function log(s){
+d.activity.unshift(s);
+d.activity=d.activity.slice(0,5);
+}
+
+function save(){
+try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}
+render();
+}
+
+function award(n,why){
+d.xp+=n;
+log('✨ +'+n+' XP · '+why);
+save();
+toast('+'+n+' XP — '+why);
+checkMissions();
+}
+
+function saveProfile(){
+let n=document.getElementById('nick').value.trim();
+if(!n)return toast('Digite um apelido!');
+d.nick=n;
+d.avatar=document.getElementById('avatar').value;
+log('👤 Perfil atualizado');
+save();
+toast('Perfil salvo!');
+}
+
+function explore(n){
+if(d.explored.includes(n))return toast('Você já explorou esta região!');
+d.explored.push(n);
+document.getElementById('regionInfo').textContent='Você descobriu os segredos de '+n+'!';
+award(15,'Explorou '+n);
+}
+
+function foundCity(){
+let name=document.getElementById('cityName').value.trim();
+let region=document.getElementById('cityRegion').value;
+let desc=document.getElementById('cityDesc').value.trim();
+
+if(!name)return toast('Digite o nome da cidade.');
+if(d.cities.some(c=>c.name.toLowerCase()===name.toLowerCase()))
+return toast('Já existe uma cidade com esse nome neste navegador.');
+if(d.memberCity)
+return toast('Você já pertence a uma cidade. Saia dela antes de fundar outra.');
+
+let city={
+id:'c'+Date.now(),
+name,region,desc,
+owner:d.nick,
+members:[d.nick]
+};
+
+d.cities.push(city);
+d.memberCity=city.id;
+
+document.getElementById('cityName').value='';
+document.getElementById('cityDesc').value='';
+award(50,'Fundou '+name);
+}
+
+function joinCity(id){
+if(d.memberCity)return toast('Você já está em uma cidade. Saia dela primeiro.');
+let c=d.cities.find(x=>x.id===id);
+if(!c)return;
+
+if(!c.members.includes(d.nick))c.members.push(d.nick);
+d.memberCity=id;
+log('🏙️ Entrou na cidade '+c.name);
+save();
+toast('Você entrou em '+c.name);
+}
+
+function leaveCity(){
+if(!d.memberCity)return toast('Você ainda não está em uma cidade.');
+let c=d.cities.find(x=>x.id===d.memberCity);
+if(c)c.members=c.members.filter(n=>n!==d.nick);
+d.memberCity=null;
+save();
+toast('Você saiu da cidade. Agora pode entrar em outra.');
+}
+
+function addFriend(){
+let n=document.getElementById('friendName').value.trim();
+if(!n)return toast('Digite o apelido do amigo.');
+if(n.toLowerCase()===d.nick.toLowerCase())return toast('Você não pode adicionar a si mesmo.');
+if(d.friends.some(x=>x.toLowerCase()===n.toLowerCase()))return toast('Esse amigo já está na lista.');
+
+d.friends.push(n);
+document.getElementById('friendName').value='';
+award(10,'Adicionou '+n+' à lista de amigos');
+}
+
+function newQuiz(){
+qi=(qi+1)%quiz.length;
+renderQuiz();
+}
+
+function renderQuiz(){
+let q=quiz[qi];
+document.getElementById('quizQuestion').textContent=q.q;
+let box=document.getElementById('quizAnswers');
+box.innerHTML='';
+
+q.a.forEach((a,i)=>{
+let b=document.createElement('button');
+b.className='option';
+b.textContent=String.fromCharCode(65+i)+'. '+a;
+
+b.onclick=()=>{
+if(i===q.c){
+document.getElementById('quizFeedback').textContent='🎉 Acertou! +25 XP';
+d.solved.push(Date.now());
+d.wins++;
+award(25,'Venceu o quiz gamer');
+}else{
+document.getElementById('quizFeedback').textContent='❌ Tente de novo!';
+}
+[...box.children].forEach(x=>x.disabled=true);
+};
+
+box.appendChild(b);
+});
+
+document.getElementById('quizFeedback').textContent='Escolha a resposta correta.';
+}
+
+function reflexClick(){
+let b=document.getElementById('reflexBtn');
+let s=document.getElementById('reflexStatus');
+
+if(reflexState==='idle'){
+reflexState='waiting';
+b.textContent='Espere o verde...';
+b.style.background='#273650';
+s.textContent='Não toque ainda!';
+
+let delay=1200+Math.random()*3000;
+
+reflexTimer=setTimeout(()=>{
+reflexState='go';
+reflexStart=performance.now();
+b.textContent='TOQUE AGORA!';
+b.style.background='#54f59a';
+s.textContent='AGORA!';
+},delay);
+
+}else if(reflexState==='waiting'){
+clearTimeout(reflexTimer);
+reflexState='idle';
+b.textContent='Tentar novamente';
+b.style.background='';
+s.textContent='Cedo demais! Espere o botão ficar verde.';
+
+}else if(reflexState==='go'){
+let ms=Math.round(performance.now()-reflexStart);
+reflexState='idle';
+b.textContent='Jogar de novo';
+b.style.background='';
+s.textContent='Seu tempo: '+ms+' ms';
+
+document.getElementById('reflexResult').textContent=
+ms<300?'Reflexos lendários! +20 XP':
+ms<500?'Muito bom! +10 XP':'Boa tentativa! +5 XP';
+
+award(ms<300?20:ms<500?10:5,'Teste de reflexo: '+ms+' ms');
+}
+}
+
+function solveRiddle(){
+if(d.riddleDone)return toast('Você já ganhou esta recompensa!');
+let a=document.getElementById('riddleAnswer').value.trim().toLowerCase();
+
+if(['teclado','um teclado','o teclado'].includes(a)){
+d.riddleDone=true;
+document.getElementById('riddleFeedback').textContent='Acertou: teclado!';
+award(30,'Resolveu o enigma');
+}else{
+document.getElementById('riddleFeedback').textContent='Dica: você usa para digitar.';
+}
+}
+
+function targetGame(){
+let now=Date.now();
+if(now-d.lastTarget<5000)return toast('Espere 5 segundos para jogar de novo.');
+d.lastTarget=now;
+d.wins++;
+award(5,'Acertou o alvo');
+}
+
+function shareMessage(){
+return '🎮 Sou '+d.nick+' '+d.avatar+' no LEVEL UP — Mapa dos Gamers!\n⭐ Nível '+(Math.floor(d.xp/100)+1)+' · '+d.xp+' XP\n🏙️ Cidades fundadas: '+d.cities.length+'\nVem explorar e jogar comigo!';
+}
+
+async function shareProfile(){
+let text=shareMessage();
+try{
+if(navigator.share){
+await navigator.share({title:'Meu perfil LEVEL UP',text});
+}else{
+await navigator.clipboard.writeText(text);
+toast('Texto copiado! Cole em qualquer app.');
+}
+}catch(e){}
+}
+
+async function copyShare(){
+try{
+await navigator.clipboard.writeText(shareMessage());
+toast('Texto copiado!');
+}catch(e){
+document.getElementById('shareText').value=shareMessage();
+toast('Copie o texto da caixa.');
+}
+}
+
+function checkMissions(){
+let change=false;
+
+missions.forEach(m=>{
+if(m.ok(d)&&!d.claimed.includes(m.id)){
+d.claimed.push(m.id);
+d.xp+=m.xp;
+log('🎯 Missão: '+m.name+' (+'+m.xp+' XP)');
+change=true;
+}
+});
+
+if(change){
+save();
+toast('Missão concluída!');
+}else{
+render();
+}
+}
+
+function render(){
+document.getElementById('welcome').textContent='Olá, '+d.avatar+' '+d.nick+'!';
+document.getElementById('nick').value=d.nick==='Player'?'':d.nick;
+document.getElementById('avatar').value=d.avatar;
+document.getElementById('xp').textContent=d.xp;
+
+let level=Math.floor(d.xp/100)+1;
+let part=d.xp%100;
+
+document.getElementById('level').textContent=level;
+document.getElementById('xpText').textContent=part+' / 100 XP para o próximo nível';
+document.getElementById('xpBar').style.width=part+'%';
+document.getElementById('cityCount').textContent=d.cities.length;
+document.getElementById('wins').textContent=d.wins;
+
+document.getElementById('rank').textContent='RANK: '+
+(level>=10?'LENDÁRIO':level>=5?'ÉPICO':level>=3?'VETERANO':'NOVATO');
+
+document.getElementById('mapgrid').innerHTML=regions.map(r=>
+'<button class="region '+(d.explored.includes(r.name)?'visited':'')+'" onclick="explore('+JSON.stringify(r.name)+')">'+
+'<span class="emoji">'+r.emoji+'</span><b>'+r.name+'</b><small>'+r.desc+'</small>'+
+'<small>'+(d.explored.includes(r.name)?'✅ Explorada':'+15 XP')+'</small></button>'
+).join('');
+
+document.getElementById('cityList').innerHTML=
+'<h3 style="margin-top:15px">Minhas cidades</h3>'+
+(d.cities.length?d.cities.map(c=>
+'<div class="tile"><b>🏙️ '+esc(c.name)+'</b><p>📍 '+esc(c.region)+' · 👥 '+c.members.length+' membro(s)</p><p>'+esc(c.desc||'Sem descrição')+'</p></div>'
+).join(''):'<div class="empty">Ainda não há cidades criadas neste navegador.</div>');
+
+document.getElementById('existingCities').innerHTML=d.cities.length?
+d.cities.map(c=>
+'<div class="tile"><b>'+esc(c.name)+'</b><p>'+esc(c.region)+' · '+c.members.length+' membro(s)</p><p>'+esc(c.desc||'Sem descrição')+'</p><button '+(d.memberCity?'disabled':'')+' onclick="joinCity('+JSON.stringify(c.id)+')">'+(d.memberCity===c.id?'✅ Sua cidade':'Entrar nesta cidade')+'</button></div>'
+).join(''):
+'<div class="empty">As cidades criadas aqui aparecerão nesta lista.</div>';
+
+let mc=d.cities.find(c=>c.id===d.memberCity);
+
+document.getElementById('membership').textContent=mc?
+'🏙️ Você pertence à cidade: '+mc.name+'. Você não pode entrar em outra enquanto estiver nela.':
+'Você ainda não pertence a uma cidade.';
+
+document.getElementById('friendList').innerHTML=d.friends.length?
+d.friends.map(n=>
+'<div class="tile friendrow"><div>🟢 <b>'+esc(n)+'</b><br><span class="small">Amigo salvo localmente</span></div><button class="danger" onclick="removeFriend('+JSON.stringify(n)+')">Remover</button></div>'
+).join(''):
+'<div class="empty">Sua lista de amigos está vazia.</div>';
+
+document.getElementById('activity').innerHTML=d.activity.length?
+d.activity.map(s=>'<div class="tile">'+esc(s)+'</div>').join(''):
+'<div class="empty">Comece explorando!</div>';
+
+document.getElementById('missionList').innerHTML=missions.map(m=>
+'<div class="tile"><span class="badge">'+(d.claimed.includes(m.id)?'✅ CONCLUÍDA':m.ok(d)?'⭐ DISPONÍVEL':'🔒 EM ANDAMENTO')+'</span> <span class="reward">+'+m.xp+' XP</span><h3>'+m.name+'</h3><p>'+m.desc+'</p></div>'
+).join('');
+
+document.getElementById('achievements').innerHTML=[
+['🧭','Explorador',d.explored.length>0],
+['🏙️','Fundador',d.cities.length>0],
+['🎮','Jogador',d.wins>0],
+['👥','Social',d.friends.length>0],
+['🔐','Decifrador',d.riddleDone]
+].map(a=>
+'<span class="chip" style="opacity:'+(a[2]?'1':'.5')+'">'+a[0]+' '+a[1]+(a[2]?' ✓':' 🔒')+'</span>'
+).join('');
+
+document.getElementById('shareText').value=shareMessage();
+document.getElementById('year').textContent=new Date().getFullYear();
+}
+
+function removeFriend(n){
+d.friends=d.friends.filter(x=>x!==n);
+save();
+}
+
+function exportSave(){
+let blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+let url=URL.createObjectURL(blob);
+let a=document.createElement('a');
+a.href=url;
+a.download='level-up-backup.json';
+a.click();
+URL.revokeObjectURL(url);
+}
+
+function importSave(e){
+let f=e.target.files[0];
+if(!f)return;
+
+let r=new FileReader();
+
+r.onload=()=>{
+try{
+let x=JSON.parse(r.result);
+if(!Array.isArray(x.cities)||!Array.isArray(x.friends))throw Error();
+d={...base,...x};
+save();
+toast('Backup importado!');
+}catch(err){
+toast('Arquivo inválido');
+}
+};
+
+r.readAsText(f);
+}
+
+render();
+renderQuiz();
 </script>
 </body>
 </html>
